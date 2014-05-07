@@ -2,9 +2,17 @@
 
 A simple autocomplete engine for nodejs using redis
 
+###Install
+	
+	Add to package.json
+	
+	"dependencies":{
+		"autored": "git+ssh://git@github.com:suhail-ansari/autored.git"
+   	}
+
 ###Usage
 	
-	var AutoRed = require('autored');
+	var AutoRed = require('AutoRed');
 	var autored = new AutoRed();
 	//var autored = new Autored(port, host, options);
 	//same as redis.createClient in node_redis
