@@ -34,7 +34,7 @@ var AutoRed = function (port, host, opts) {
     //clear all data in redis
     this.flushall = function () {
         client.flushall();
-    }
+    };
 
     /*add data item to redis for creating search index and for retreiving data later
     sample data looks like this
@@ -60,16 +60,17 @@ var AutoRed = function (port, host, opts) {
 
         //check score, if not then set to 0
         if (!item.score || !isInt(item.score)) {
-            item.score = 0
+            item.score = 0;
         }
 
         //check if the 'data' field is a valid json, may change in the future
+		var data;
         if (typeof item.data != 'string') {
 
             try {
 
                 console.log(item.data);
-                var data = JSON.stringify(item.data);
+                data = JSON.stringify(item.data);
 
             } catch (err) {
 
@@ -82,7 +83,7 @@ var AutoRed = function (port, host, opts) {
             try {
 
                 JSON.parse(item.data);
-                var data = item.data;
+                data = item.data;
 
             } catch (err) {
 
@@ -103,7 +104,7 @@ var AutoRed = function (port, host, opts) {
         //build index//
         buildIndex(item.term.toLowerCase(), item.id, item.category, item.score);
         return true;
-    }
+    };
 
 
     /* Build index for search
@@ -129,11 +130,11 @@ var AutoRed = function (port, host, opts) {
 
         var words = searchTerm.match(allWordsRegEx);
         console.log(words);
-        for (word in words) {
+        for (var word in words) {
 
             var searchIndices = generateIndices(words[word]);
             console.log(searchIndices);
-            for (index in searchIndices) {
+            for (var index in searchIndices) {
                 client.zadd(['autored-index:' + category + ':' + searchIndices[index], score, searchItemId], function (err, response) {
                     if (err) {
                         throw err;
@@ -145,7 +146,7 @@ var AutoRed = function (port, host, opts) {
 
         }
 
-    }
+    };
 
 
     /*
@@ -165,7 +166,7 @@ var AutoRed = function (port, host, opts) {
             //indices.push(word + "*");
             return indices;
         }
-    }
+    };
 
     /*
         searches redis and return the autocomplete options
@@ -205,7 +206,7 @@ var AutoRed = function (port, host, opts) {
         //return empty results if no valid search words in term
         if (terms.length === 0) {
             cb(null, []);
-            return
+            return;
 
         //for one term, return the data associated with the ids for this search-index
         } else if (terms.length === 1) {
@@ -220,7 +221,7 @@ var AutoRed = function (port, host, opts) {
         }
 
 
-    }
+    };
 
     this.searchOne = function (category, term, cb) {
 
@@ -249,7 +250,7 @@ var AutoRed = function (port, host, opts) {
             }
         });
 
-    }
+    };
 
     this.searchMultiple = function (category, terms, cb) {
 
@@ -280,7 +281,7 @@ var AutoRed = function (port, host, opts) {
                     var newIntersectionQuery = [('autored-index:' + category + ':' + terms.join('|')), terms.length]
                         
                         .concat(terms.map(function (i) {
-                            return ('autored-index:' + category + ':' + i)
+                            return ('autored-index:' + category + ':' + i);
                         }));
                         
                     //calculate and store intersection
@@ -330,8 +331,8 @@ var AutoRed = function (port, host, opts) {
                 }
             }
         });//client.zrange//
-    }
-}
+    };
+};
 
 
 module.exports = AutoRed;
